@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="user_types_string">
+        <item>Продавец</item>
+        <item>Покупатель</item>
+    </string-array>
+    <string-array name="user_types">
+        <item>buyer</item>
+        <item>seller</item>
+    </string-array>
+</resources>

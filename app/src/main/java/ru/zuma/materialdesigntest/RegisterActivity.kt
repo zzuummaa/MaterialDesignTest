@@ -3,28 +3,31 @@ package ru.zuma.materialdesigntest
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.TargetApi
-import android.content.pm.PackageManager
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.app.LoaderManager.LoaderCallbacks
 import android.content.CursorLoader
 import android.content.Loader
 import android.database.Cursor
 import android.net.Uri
-import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import android.widget.Toast
 
 import java.util.ArrayList
-import android.Manifest.permission.READ_CONTACTS
 
 import kotlinx.android.synthetic.main.activity_register.*
+import ru.zuma.materialdesigntest.rest.AuthService
+import ru.zuma.materialdesigntest.rest.User
+import android.app.Activity
+import android.view.inputmethod.InputMethodManager
+
 
 /**
  * A login screen that offers login via email/password.
@@ -33,13 +36,12 @@ class RegisterActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private var mAuthTask: UserLoginTask? = null
+    var isRetroFinish: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
         // Set up the login form.
-        populateAutoComplete()
         password.setOnEditorActionListener(TextView.OnEditorActionListener { _, id, _ ->
             if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
                 attemptLogin()
@@ -49,43 +51,14 @@ class RegisterActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
         })
 
         email_sign_in_button.setOnClickListener { attemptLogin() }
-    }
 
-    private fun populateAutoComplete() {
-        if (!mayRequestContacts()) {
-            return
-        }
-
-        loaderManager.initLoader(0, null, this)
-    }
-
-    private fun mayRequestContacts(): Boolean {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return true
-        }
-        if (checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            return true
-        }
-        if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-            Snackbar.make(email, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(android.R.string.ok,
-                            { requestPermissions(arrayOf(READ_CONTACTS), REQUEST_READ_CONTACTS) })
-        } else {
-            requestPermissions(arrayOf(READ_CONTACTS), REQUEST_READ_CONTACTS)
-        }
-        return false
-    }
-
-    /**
-     * Callback received when a permissions request has been completed.
-     */
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
-                                            grantResults: IntArray) {
-        if (requestCode == REQUEST_READ_CONTACTS) {
-            if (grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                populateAutoComplete()
-            }
-        }
+        val adapter = ArrayAdapter.createFromResource(this,
+                R.array.user_types_string, R.layout.user_type_spinner_item)
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        // Apply the adapter to the spinner
+        userTypeSpinner.adapter = adapter
     }
 
 
@@ -95,25 +68,36 @@ class RegisterActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
      * errors are presented and no actual login attempt is made.
      */
     private fun attemptLogin() {
-        if (mAuthTask != null) {
+        if (!isRetroFinish) {
             return
         }
 
         // Reset errors.
         email.error = null
         password.error = null
+        password2.error = null
+        name.error = null
 
         // Store values at the time of the login attempt.
         val emailStr = email.text.toString()
         val passwordStr = password.text.toString()
+        val passwordStr2 = password2.text.toString()
+        val nameStr = name.text.toString()
+        val typeStr = resources.getStringArray(R.array.user_types)[userTypeSpinner.selectedItemId.toInt()]
 
         var cancel = false
         var focusView: View? = null
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(passwordStr) && !isPasswordValid(passwordStr)) {
+        if (TextUtils.isEmpty(passwordStr) || !isPasswordValid(passwordStr)) {
             password.error = getString(R.string.error_invalid_password)
             focusView = password
+            cancel = true
+        }
+
+        if (!TextUtils.equals(passwordStr, passwordStr2)) {
+            password2.error = getString(R.string.error_incorrect_password2)
+            focusView = password2
             cancel = true
         }
 
@@ -128,6 +112,15 @@ class RegisterActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
             cancel = true
         }
 
+        // Check for a valid name.
+        if (TextUtils.isEmpty(nameStr)) {
+            name.error = getString(R.string.error_field_required)
+        } else if (!isNameValid(nameStr)) {
+            name.error = getString(R.string.error_invalid_name)
+            focusView = name
+            cancel = true
+        }
+
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
@@ -135,9 +128,40 @@ class RegisterActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
+            val imm = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm!!.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
+
             showProgress(true)
-            mAuthTask = UserLoginTask(emailStr, passwordStr)
-            mAuthTask!!.execute(null as Void?)
+
+            val user: User = User(nameStr, passwordStr, emailStr, typeStr)
+            AuthService.registerCommi(user, onAuthSuccess = {
+                Log.d(this@RegisterActivity.javaClass.simpleName, "Register finished, new cookie: $it")
+                isRetroFinish = true
+                finish()
+            }, onAuthFailure = { m, t ->
+                var toastMsg: String
+
+                if (t != null) {
+                    Log.e(this@RegisterActivity.javaClass.simpleName, "", t)
+                    toastMsg = t.message!!
+                } else if (m != null) {
+                    Log.e(this@RegisterActivity.javaClass.simpleName, m)
+                    toastMsg = m
+                } else {
+                    Log.e(this@RegisterActivity.javaClass.simpleName, "Unknown error")
+                    toastMsg = "Unknown error"
+                }
+
+                Toast.makeText(
+                        this@RegisterActivity,
+                        toastMsg,
+                        Toast.LENGTH_LONG
+                ).show()
+
+                isRetroFinish = true
+                showProgress(false)
+            })
+            isRetroFinish = false
         }
     }
 
@@ -225,61 +249,5 @@ class RegisterActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
         val IS_PRIMARY = 1
     }
 
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    inner class UserLoginTask internal constructor(private val mEmail: String, private val mPassword: String) : AsyncTask<Void, Void, Boolean>() {
 
-        override fun doInBackground(vararg params: Void): Boolean? {
-            // TODO: attempt authentication against a network service.
-
-            try {
-                // Simulate network access.
-                Thread.sleep(2000)
-            } catch (e: InterruptedException) {
-                return false
-            }
-
-            return DUMMY_CREDENTIALS
-                    .map { it.split(":") }
-                    .firstOrNull { it[0] == mEmail }
-                    ?.let {
-                        // Account exists, return true if the password matches.
-                        it[1] == mPassword
-                    }
-                    ?: true
-        }
-
-        override fun onPostExecute(success: Boolean?) {
-            mAuthTask = null
-            showProgress(false)
-
-            if (success!!) {
-                finish()
-            } else {
-                password.error = getString(R.string.error_incorrect_password)
-                password.requestFocus()
-            }
-        }
-
-        override fun onCancelled() {
-            mAuthTask = null
-            showProgress(false)
-        }
-    }
-
-    companion object {
-
-        /**
-         * Id to identity READ_CONTACTS permission request.
-         */
-        private val REQUEST_READ_CONTACTS = 0
-
-        /**
-         * A dummy authentication store containing known user names and passwords.
-         * TODO: remove after connecting to a real authentication system.
-         */
-        private val DUMMY_CREDENTIALS = arrayOf("foo@example.com:hello", "bar@example.com:world")
-    }
 }

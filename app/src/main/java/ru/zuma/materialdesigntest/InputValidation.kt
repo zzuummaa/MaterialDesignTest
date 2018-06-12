@@ -13,3 +13,8 @@ fun isPasswordValid(password: String): Boolean {
     //TODO: Replace this with your own logic
     return password.length > 4
 }
+
+fun isNameValid(name: String): Boolean {
+    //TODO: Replace this with your own logic
+    return name.length > 1
+}

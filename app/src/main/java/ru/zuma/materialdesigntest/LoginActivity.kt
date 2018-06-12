@@ -3,34 +3,25 @@ package ru.zuma.materialdesigntest
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.TargetApi
-import android.content.SharedPreferences
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.preference.PreferenceManager
+
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_login.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import ru.zuma.materialdesigntest.db.PREF_COOKIES
-import ru.zuma.materialdesigntest.rest.AuthAPI
-import ru.zuma.materialdesigntest.rest.CommiApi
+import ru.zuma.materialdesigntest.rest.AuthService
 import ru.zuma.materialdesigntest.rest.User
 
 class LoginActivity : AppCompatActivity() {
 
-    lateinit var authApi: AuthAPI
     var isRetroFinish: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
-        authApi = CommiApi.retrofit.create(AuthAPI::class.java)
 
         btSignIn.setOnClickListener { attemptLogin() }
     }
@@ -84,50 +75,33 @@ class LoginActivity : AppCompatActivity() {
             showProgress(true)
 
             val user: User = User(email = emailStr, passwd = passwordStr)
-            authApi.login(user).enqueue(object: Callback<Void> {
-                override fun onFailure(call: Call<Void>?, t: Throwable?) {
+            AuthService.loginCommi(user, onAuthSuccess = {
+                Log.d(this@LoginActivity.javaClass.simpleName, "Login finished, new cookie: $it")
+                isRetroFinish = true
+                finish()
+            }, onAuthFailure = { m, t ->
+                var toastMsg: String
+
+                if (t != null) {
                     Log.e(this@LoginActivity.javaClass.simpleName, "", t)
-                    Toast.makeText(
-                            this@LoginActivity,
-                            t!!.message,
-                            Toast.LENGTH_LONG)
+                    toastMsg = t.message!!
+                } else if (m != null) {
+                    Log.e(this@LoginActivity.javaClass.simpleName, m)
+                    toastMsg = m
+                } else {
+                    Log.e(this@LoginActivity.javaClass.simpleName, "Unknown error")
+                    toastMsg = "Unknown error"
                 }
 
-                override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
-                    Log.d(this@LoginActivity.javaClass.simpleName, "onResponse")
-                    showProgress(false)
+                Toast.makeText(
+                        this@LoginActivity,
+                        toastMsg,
+                        Toast.LENGTH_LONG
+                ).show()
 
-                    var toastStr: String = ""
-
-                    if (response!!.code() == 200) {
-                        val cookies = HashSet<String>()
-
-                        for (header in response.raw().headers("Set-Cookie")) {
-                            cookies.add(header)
-                        }
-
-                        PreferenceManager.getDefaultSharedPreferences(this@LoginActivity).edit()
-                                .putStringSet(PREF_COOKIES, cookies)
-                                .apply();
-
-                        Log.d(this@LoginActivity.javaClass.simpleName, "Login finished, new cookie: ${cookies}")
-                        finish()
-                    } else if(response!!.code() == 400) {
-                        toastStr = "Авторизация не удалась"
-                    } else {
-                        toastStr = "Ошибка сервера"
-                    }
-
-                    Toast.makeText(
-                            this@LoginActivity,
-                            toastStr,
-                            Toast.LENGTH_LONG
-                    ).show()
-                }
-
+                isRetroFinish = true
             })
-//            mAuthTask = UserLoginTask(emailStr, passwordStr)
-//            mAuthTask!!.execute(null as Void?)
+            isRetroFinish = false
         }
     }
 

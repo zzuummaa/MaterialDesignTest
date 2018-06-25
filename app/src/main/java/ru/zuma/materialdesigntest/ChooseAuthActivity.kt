@@ -26,4 +26,9 @@ class ChooseAuthActivity : AppCompatActivity() {
             startActivityForResult(intent, REQ_REGISTER)
         }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        setResult(resultCode)
+        finish()
+    }
 }

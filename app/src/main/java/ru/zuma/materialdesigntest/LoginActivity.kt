@@ -6,12 +6,14 @@ import android.annotation.TargetApi
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.preference.PreferenceManager
 
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_login.*
+import ru.zuma.materialdesigntest.db.PREF_COOKIES
 import ru.zuma.materialdesigntest.rest.AuthService
 import ru.zuma.materialdesigntest.rest.User
 
@@ -74,27 +76,34 @@ class LoginActivity : AppCompatActivity() {
             // perform the user login attempt.
             showProgress(true)
 
-            val user: User = User(email = emailStr, passwd = passwordStr)
+            val user: User = User(email = emailStr, password = passwordStr)
             AuthService.loginCommi(user, onAuthSuccess = {
-                Log.d(this@LoginActivity.javaClass.simpleName, "Login finished, new cookie: $it")
+                Log.d(this.javaClass.simpleName, "Login finished, new cookie: $it")
+
+                PreferenceManager.getDefaultSharedPreferences(this)
+                        .edit()
+                        .putString(PREF_COOKIES, it)
+                        .apply()
+
                 isRetroFinish = true
+                setResult(RESULT_OK)
                 finish()
             }, onAuthFailure = { m, t ->
                 var toastMsg: String
 
                 if (t != null) {
-                    Log.e(this@LoginActivity.javaClass.simpleName, "", t)
+                    Log.e(this.javaClass.simpleName, "", t)
                     toastMsg = t.message!!
                 } else if (m != null) {
-                    Log.e(this@LoginActivity.javaClass.simpleName, m)
+                    Log.e(this.javaClass.simpleName, m)
                     toastMsg = m
                 } else {
-                    Log.e(this@LoginActivity.javaClass.simpleName, "Unknown error")
+                    Log.e(this.javaClass.simpleName, "Unknown error")
                     toastMsg = "Unknown error"
                 }
 
                 Toast.makeText(
-                        this@LoginActivity,
+                        this,
                         toastMsg,
                         Toast.LENGTH_LONG
                 ).show()

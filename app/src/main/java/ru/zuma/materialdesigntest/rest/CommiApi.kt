@@ -18,7 +18,8 @@ interface CommiApi {
         init {
             retrofit = Retrofit.Builder()
                     //.baseUrl("https://commiapi.azurewebsites.net/")
-                    .baseUrl("http://192.168.1.64:8080/")
+                    .baseUrl("http://commirest.azurewebsites.net/")
+                    //.baseUrl("http://192.168.1.64:8080/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
 

@@ -26,7 +26,9 @@ import kotlinx.android.synthetic.main.activity_register.*
 import ru.zuma.materialdesigntest.rest.AuthService
 import ru.zuma.materialdesigntest.rest.User
 import android.app.Activity
+import android.preference.PreferenceManager
 import android.view.inputmethod.InputMethodManager
+import ru.zuma.materialdesigntest.db.PREF_COOKIES
 
 
 /**
@@ -135,25 +137,32 @@ class RegisterActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
 
             val user: User = User(nameStr, passwordStr, emailStr, typeStr)
             AuthService.registerCommi(user, onAuthSuccess = {
-                Log.d(this@RegisterActivity.javaClass.simpleName, "Register finished, new cookie: $it")
+                Log.d(this.javaClass.simpleName, "Register finished, new cookie: $it")
+
+                PreferenceManager.getDefaultSharedPreferences(this)
+                        .edit()
+                        .putString(PREF_COOKIES, it)
+                        .apply()
+
                 isRetroFinish = true
+                setResult(Activity.RESULT_OK)
                 finish()
             }, onAuthFailure = { m, t ->
                 var toastMsg: String
 
                 if (t != null) {
-                    Log.e(this@RegisterActivity.javaClass.simpleName, "", t)
+                    Log.e(this.javaClass.simpleName, "", t)
                     toastMsg = t.message!!
                 } else if (m != null) {
-                    Log.e(this@RegisterActivity.javaClass.simpleName, m)
+                    Log.e(this.javaClass.simpleName, m)
                     toastMsg = m
                 } else {
-                    Log.e(this@RegisterActivity.javaClass.simpleName, "Unknown error")
+                    Log.e(this.javaClass.simpleName, "Unknown error")
                     toastMsg = "Unknown error"
                 }
 
                 Toast.makeText(
-                        this@RegisterActivity,
+                        this,
                         toastMsg,
                         Toast.LENGTH_LONG
                 ).show()

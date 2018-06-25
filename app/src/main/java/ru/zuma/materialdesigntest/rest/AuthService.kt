@@ -26,14 +26,20 @@ class AuthService() {
                     var toastStr = ""
 
                     if (response!!.code() == 200) {
+                        val cookieName = "Commi"
 
                         var commiCookie = response.raw().headers("Set-Cookie")
                                 .stream()
                                 .findAny()
-                                .filter { it.startsWith("commi") }
-                                .ifPresent { onAuthSuccess?.invoke(it) }
+                                .filter { it.startsWith(cookieName) }
 
-                        return
+                        if (commiCookie.isPresent) {
+                            onAuthSuccess?.invoke(commiCookie.get())
+                            return
+                        } else {
+                            toastStr = "Сервер не вернул печеньки $cookieName :("
+                        }
+
                     } else if(response!!.code() == 400) {
                         toastStr = "Авторизация не удалась"
                     } else {
@@ -57,14 +63,20 @@ class AuthService() {
                     var toastStr = ""
 
                     if (response!!.code() == 200) {
+                        val cookieName = "Commi"
 
                         var commiCookie = response.raw().headers("Set-Cookie")
                                 .stream()
                                 .findAny()
-                                .filter { it.startsWith("commi") }
-                                .ifPresent { onAuthSuccess?.invoke(it) }
+                                .filter { it.startsWith(cookieName) }
 
-                        return
+                        if (commiCookie.isPresent) {
+                            onAuthSuccess?.invoke(commiCookie.get())
+                            return
+                        } else {
+                            toastStr = "Сервер не вернул печеньки $cookieName :("
+                        }
+
                     } else if(response!!.code() == 400) {
                         toastStr = "Регистрация не удалась"
                     } else {

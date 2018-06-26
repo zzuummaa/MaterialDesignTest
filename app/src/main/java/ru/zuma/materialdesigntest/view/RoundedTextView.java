@@ -1,13 +1,10 @@
 package ru.zuma.materialdesigntest.view;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
-import android.graphics.drawable.shapes.Shape;
 import android.util.AttributeSet;
 import android.view.Gravity;
 
@@ -39,10 +36,13 @@ public class RoundedTextView extends android.support.v7.widget.AppCompatTextView
 
         resizeShape();
 
-        setTextColor(0xFFFFFFFF);
-
         int paddHoriz = (int) (8 * DENSITY);
-        setPadding(paddHoriz, getPaddingTop(), paddHoriz, getPaddingBottom());
+        if (getPaddingLeft() < paddHoriz) {
+            setPadding(paddHoriz, getPaddingTop(), getPaddingRight(), getPaddingBottom());
+        }
+        if (getPaddingRight() < paddHoriz) {
+            setPadding(getPaddingLeft(), getPaddingTop(), paddHoriz, getPaddingBottom());
+        }
 
         setGravity(Gravity.CENTER);
     }
@@ -81,6 +81,6 @@ public class RoundedTextView extends android.support.v7.widget.AppCompatTextView
     public void setBackgroundColor(int color) {
         this.color = color;
         background.getPaint().setColor(color);
-        setBackground(background);
+        //setBackground(background);
     }
 }

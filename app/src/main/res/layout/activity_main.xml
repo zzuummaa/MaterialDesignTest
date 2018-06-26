@@ -3,7 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp"
     android:orientation="vertical">
 
     <TextView
@@ -11,14 +10,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Cookie"
-
+        android:padding="16dp"
         android:gravity="center_horizontal" />
 
-    <ListView
-        android:id="@+id/lvMain"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvMain"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:dividerHeight="0dp"
-        android:divider="@color/colorWhite"/>
+        android:layout_height="match_parent">
+    </android.support.v7.widget.RecyclerView>
+
+    <!--<ListView-->
+        <!--android:id="@+id/lvMain"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:dividerHeight="0dp"-->
+        <!--android:divider="@color/colorWhite"/>-->
 
 </LinearLayout>

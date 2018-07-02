@@ -27,4 +27,6 @@
     <string name="macbook_air_13_nmqd32ru_a_8gb">
         MacBook Air 13\nMQD32RU/A 8GB
     </string>
+    <string name="drawer_open">open drawer</string>
+    <string name="drawer_close">close drawer</string>
 </resources>

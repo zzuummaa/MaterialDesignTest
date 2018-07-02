@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/tb_search"
+        android:icon="@drawable/ic_search"
+        
+        app:showAsAction="always"
+        android:title="" />
+    <item
+        android:id="@+id/tb_liked"
+        android:icon="@drawable/ic_heart"
+        app:showAsAction="always"
+        android:title="" />
+    <item
+        android:id="@+id/tb_shopping_cart"
+        android:icon="@drawable/ic_shopping_cart"
+        app:showAsAction="always"
+        android:title="" />
+    <item
+        android:id="@+id/tb_personal_page"
+        android:icon="@drawable/ic_personal_page"
+        app:showAsAction="always"
+        android:title="" />
+    <item
+        android:id="@+id/tb_help"
+        android:icon="@drawable/ic_help"
+        app:showAsAction="always"
+        android:title="" />
+</menu>

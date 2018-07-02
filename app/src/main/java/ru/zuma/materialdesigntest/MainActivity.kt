@@ -1,6 +1,8 @@
 package ru.zuma.materialdesigntest
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -9,11 +11,16 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.Gravity
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import android.widget.ListView
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.toolbar_main.*
 import ru.zuma.materialdesigntest.db.PREF_COOKIES
 import ru.zuma.materialdesigntest.rest.Product
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,12 +34,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewManager: RecyclerView.LayoutManager
 
     // Left menu
-    lateinit var mDrawerList: ListView
+    lateinit var drawerList: ListView
     private lateinit var mDrawerToggle: ActionBarDrawerToggle
-    private lateinit var mDrawerLayout: DrawerLayout
+    private lateinit var drawerLayout: DrawerLayout
 
     var mNavItems = ArrayList<CategoriesItem>()
 
+    @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -44,7 +52,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, ChooseAuthActivity::class.java)
             startActivityForResult(intent, REQ_AUTH)
         } else {
-            tvCookie.text = "Cookie:" + cookie
+            //tvCookie.text = "Cookie:" + cookie
         }
 
         // Product view
@@ -88,21 +96,63 @@ class MainActivity : AppCompatActivity() {
         mNavItems.add(CategoriesItem("Услугм", R.drawable.ic_services))
 
         // DrawerLayout
-        mDrawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
+        drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
 
         // Populate the Navigtion Drawer with options
-        mDrawerList = findViewById(R.id.navList)
+        drawerList = findViewById(R.id.navList)
         val adapter = CategoriesAdapter(this, mNavItems)
-        mDrawerList.adapter = adapter
+        drawerList.adapter = adapter
+
+        val drawerToggle = object : ActionBarDrawerToggle(this, drawerLayout,
+                tbMain, R.string.drawer_open, R.string.drawer_close) {
+            override fun onDrawerClosed(view: View) {
+                super.onDrawerClosed(view)
+                toast("onDrawerClosed")
+                supportActionBar!!.show()
+            }
+
+            override fun onDrawerOpened(drawerView: View) {
+                super.onDrawerOpened(drawerView)
+                toast("onDrawerOpened")
+                supportActionBar!!.hide()
+            }
+        }
+        drawerLayout.addDrawerListener(drawerToggle)
         // -----------------------------------------------------------
+
+        // Toolbar
+        setSupportActionBar(tbMain)
+        tbMain.setNavigationOnClickListener {
+            drawerLayout.openDrawer(Gravity.LEFT)
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_toolbar_items, menu)
+        return true
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) {
-            tvCookie.text = "Cookie:" + PreferenceManager.getDefaultSharedPreferences(this)
-                    .getString(PREF_COOKIES, "")
+//            tvCookie.text = "Cookie:" + PreferenceManager.getDefaultSharedPreferences(this)
+//                    .getString(PREF_COOKIES, "")
         } else {
             finish()
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item!!.itemId) {
+            R.id.tb_help -> return true// TODO tb_help item clicked
+            R.id.tb_shopping_cart -> return true// TODO tb_shopping_cart item clicked
+            R.id.tb_liked -> return true// TODO tb_liked item clicked
+            R.id.tb_personal_page -> return true// TODO tb_personal_page item clicked
+            R.id.tb_search -> return true// TODO tb_search item clicked
+            else -> return true
+        }
+    }
+
+    private fun toast(text: CharSequence, duration: Int = Toast.LENGTH_SHORT) {
+        Toast.makeText(this, text, duration).show()
     }
 }

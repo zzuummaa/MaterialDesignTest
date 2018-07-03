@@ -16,6 +16,48 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorGray"
+                android:gravity="center">
+
+                <ru.zuma.materialdesigntest.view.RoundedEditText
+                    android:id="@+id/etSearch"
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:layout_centerInParent="true"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginEnd="40dp"
+                    android:layout_marginStart="40dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@color/colorWhite"
+                    android:hint="Что Вы хотите найти?"
+                    android:textSize="16sp"
+                    android:paddingHorizontal="20dp"
+                    android:textAlignment="textStart"/>
+
+                <Button
+                    android:id="@+id/btSearch"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:layout_marginStart="-81dp"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/ic_search_rounded"
+                    android:layout_toEndOf="@id/etSearch"/>
+
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Хиты продаж"
+                android:textSize="26sp"
+                android:textColor="#242424"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="28dp"/>
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rvMain"
                 android:layout_width="match_parent"

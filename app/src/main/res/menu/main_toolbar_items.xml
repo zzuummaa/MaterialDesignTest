@@ -2,9 +2,8 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/tb_search"
-        android:icon="@drawable/ic_search"
-        
+        android:id="@+id/tb_messages"
+        android:icon="@drawable/ic_messages"
         app:showAsAction="always"
         android:title="" />
     <item

@@ -12,7 +12,7 @@ import android.widget.ImageView
 /**
  * Created by Stephan on 27.06.2018.
  */
-internal class CategoriesAdapter(var mContext: Context, var items: ArrayList<CategoriesItem>) : BaseAdapter() {
+internal class CategoriesAdapter(var context: Context, var items: ArrayList<CategoriesItem>) : BaseAdapter() {
 
     override fun getCount(): Int {
         return items.size
@@ -31,7 +31,7 @@ internal class CategoriesAdapter(var mContext: Context, var items: ArrayList<Cat
         val view: View
 
         if (convertView == null) {
-            val inflater = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             view = inflater.inflate(R.layout.categories_item, null)
         } else {
             view = convertView

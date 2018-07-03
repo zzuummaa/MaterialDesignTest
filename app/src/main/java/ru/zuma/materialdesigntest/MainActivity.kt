@@ -2,7 +2,6 @@ package ru.zuma.materialdesigntest
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -38,7 +37,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mDrawerToggle: ActionBarDrawerToggle
     private lateinit var drawerLayout: DrawerLayout
 
-    var mNavItems = ArrayList<CategoriesItem>()
+    var categoryItems = ArrayList<CategoriesItem>()
 
     @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,41 +78,39 @@ class MainActivity : AppCompatActivity() {
 
         // Left menu
         // -----------------------------------------------------------
-        mNavItems.add(CategoriesItem("Косметика", R.drawable.ic_cosmetics))
-        mNavItems.add(CategoriesItem("Хобби и спорт", R.drawable.ic_sports))
-        mNavItems.add(CategoriesItem("Товары для дома", R.drawable.ic_home_products))
-        mNavItems.add(CategoriesItem("Техника", R.drawable.ic_technics))
-        mNavItems.add(CategoriesItem("Зоотовары и питомцы", R.drawable.ic_pet_supplies))
-        mNavItems.add(CategoriesItem("Развлечения", R.drawable.ic_entertainment))
-        mNavItems.add(CategoriesItem("Одежда и обувь", R.drawable.ic_clothes))
-        mNavItems.add(CategoriesItem("Книги", R.drawable.ic_books))
-        mNavItems.add(CategoriesItem("Растения", R.drawable.ic_plants))
-        mNavItems.add(CategoriesItem("Авто и мото", R.drawable.ic_car_products))
-        mNavItems.add(CategoriesItem("Детские товары", R.drawable.ic_child_products))
-        mNavItems.add(CategoriesItem("Канцелярские товары", R.drawable.ic_stationery))
-        mNavItems.add(CategoriesItem("Аптеки", R.drawable.ic_medicine_products))
-        mNavItems.add(CategoriesItem("Ювелирные изделия", R.drawable.ic_jewelry))
-        mNavItems.add(CategoriesItem("Услугм", R.drawable.ic_services))
+        categoryItems.add(CategoriesItem("Косметика", R.drawable.ic_cosmetics))
+        categoryItems.add(CategoriesItem("Хобби и спорт", R.drawable.ic_sports))
+        categoryItems.add(CategoriesItem("Товары для дома", R.drawable.ic_home_products))
+        categoryItems.add(CategoriesItem("Техника", R.drawable.ic_technics))
+        categoryItems.add(CategoriesItem("Зоотовары и питомцы", R.drawable.ic_pet_supplies))
+        categoryItems.add(CategoriesItem("Развлечения", R.drawable.ic_entertainment))
+        categoryItems.add(CategoriesItem("Одежда и обувь", R.drawable.ic_clothes))
+        categoryItems.add(CategoriesItem("Книги", R.drawable.ic_books))
+        categoryItems.add(CategoriesItem("Растения", R.drawable.ic_plants))
+        categoryItems.add(CategoriesItem("Авто и мото", R.drawable.ic_car_products))
+        categoryItems.add(CategoriesItem("Детские товары", R.drawable.ic_child_products))
+        categoryItems.add(CategoriesItem("Канцелярские товары", R.drawable.ic_stationery))
+        categoryItems.add(CategoriesItem("Аптеки", R.drawable.ic_medicine_products))
+        categoryItems.add(CategoriesItem("Ювелирные изделия", R.drawable.ic_jewelry))
+        categoryItems.add(CategoriesItem("Услугм", R.drawable.ic_services))
 
         // DrawerLayout
         drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
 
         // Populate the Navigtion Drawer with options
         drawerList = findViewById(R.id.navList)
-        val adapter = CategoriesAdapter(this, mNavItems)
+        val adapter = CategoriesAdapter(this, categoryItems)
         drawerList.adapter = adapter
 
         val drawerToggle = object : ActionBarDrawerToggle(this, drawerLayout,
                 tbMain, R.string.drawer_open, R.string.drawer_close) {
             override fun onDrawerClosed(view: View) {
                 super.onDrawerClosed(view)
-                toast("onDrawerClosed")
                 supportActionBar!!.show()
             }
 
             override fun onDrawerOpened(drawerView: View) {
                 super.onDrawerOpened(drawerView)
-                toast("onDrawerOpened")
                 supportActionBar!!.hide()
             }
         }
@@ -124,6 +121,11 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(tbMain)
         tbMain.setNavigationOnClickListener {
             drawerLayout.openDrawer(Gravity.LEFT)
+        }
+
+        btSearch.setOnClickListener {
+            // TODO Replace toast with search logic
+            toast("Search button clicked", Toast.LENGTH_SHORT)
         }
     }
 
@@ -143,11 +145,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item!!.itemId) {
-            R.id.tb_help -> return true// TODO tb_help item clicked
-            R.id.tb_shopping_cart -> return true// TODO tb_shopping_cart item clicked
-            R.id.tb_liked -> return true// TODO tb_liked item clicked
-            R.id.tb_personal_page -> return true// TODO tb_personal_page item clicked
-            R.id.tb_search -> return true// TODO tb_search item clicked
+            R.id.tb_help -> return true// TODO tb_help item clicked logic
+            R.id.tb_shopping_cart -> return true// TODO tb_shopping_cart item clicked logic
+            R.id.tb_liked -> return true// TODO tb_liked item clicked logic
+            R.id.tb_personal_page -> return true// TODO tb_personal_page item clicked logic
             else -> return true
         }
     }

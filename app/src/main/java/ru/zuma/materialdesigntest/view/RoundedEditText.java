@@ -1,5 +1,6 @@
 package ru.zuma.materialdesigntest.view;
 
+
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -10,11 +11,7 @@ import android.view.Gravity;
 
 import ru.zuma.materialdesigntest.R;
 
-/**
- * Created by Stephan on 26.06.2018.
- */
-
-public class RoundedTextView extends android.support.v7.widget.AppCompatTextView {
+public class RoundedEditText extends android.support.v7.widget.AppCompatEditText {
     /**
      * float px = someDpValue * DENSITY;
      * float dp = somePxValue / DENSITY;
@@ -24,22 +21,22 @@ public class RoundedTextView extends android.support.v7.widget.AppCompatTextView
     private ShapeDrawable background;
     private int color;
 
-    public RoundedTextView(Context context) {
+    public RoundedEditText(Context context) {
         super(context);
-        initRoundedTextView(context);
+        initRoundedEditText(context);
     }
 
-    public RoundedTextView(Context context, AttributeSet attrs) {
+    public RoundedEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initRoundedTextView(context);
+        initRoundedEditText(context);
     }
 
-    public RoundedTextView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public RoundedEditText(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        initRoundedTextView(context);
+        initRoundedEditText(context);
     }
 
-    private void initRoundedTextView(Context context) {
+    private void initRoundedEditText(Context context) {
         DENSITY = context.getResources().getDisplayMetrics().density;
 
         background = new ShapeDrawable();

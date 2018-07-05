@@ -5,6 +5,7 @@ import android.support.annotation.RequiresApi
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import ru.zuma.materialdesigntest.rest.model.User
 
 /**
  * Created by Stephan on 12.06.2018.

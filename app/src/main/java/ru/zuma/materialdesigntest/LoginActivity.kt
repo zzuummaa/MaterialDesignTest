@@ -15,7 +15,7 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_login.*
 import ru.zuma.materialdesigntest.db.PREF_COOKIES
 import ru.zuma.materialdesigntest.rest.AuthService
-import ru.zuma.materialdesigntest.rest.User
+import ru.zuma.materialdesigntest.rest.model.User
 
 class LoginActivity : AppCompatActivity() {
 
@@ -49,7 +49,7 @@ class LoginActivity : AppCompatActivity() {
         var cancel = false
         var focusView: View? = null
 
-        // Check for a valid password, if the user entered one.
+        // Check for a valid passwd, if the user entered one.
         if (!TextUtils.isEmpty(passwordStr) && !isPasswordValid(passwordStr)) {
             password.error = getString(R.string.error_invalid_password)
             focusView = password
@@ -76,7 +76,7 @@ class LoginActivity : AppCompatActivity() {
             // perform the user login attempt.
             showProgress(true)
 
-            val user: User = User(email = emailStr, password = passwordStr)
+            val user: User = User(email = emailStr, passwd = passwordStr)
             AuthService.loginCommi(user, onAuthSuccess = {
                 Log.d(this.javaClass.simpleName, "Login finished, new cookie: $it")
 
@@ -92,7 +92,7 @@ class LoginActivity : AppCompatActivity() {
                 var toastMsg: String
 
                 if (t != null) {
-                    Log.e(this.javaClass.simpleName, "", t)
+                    Log.e(this.javaClass.simpleName, t.message)
                     toastMsg = t.message!!
                 } else if (m != null) {
                     Log.e(this.javaClass.simpleName, m)
@@ -109,6 +109,7 @@ class LoginActivity : AppCompatActivity() {
                 ).show()
 
                 isRetroFinish = true
+                showProgress(false)
             })
             isRetroFinish = false
         }

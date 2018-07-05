@@ -3,7 +3,7 @@ package ru.zuma.materialdesigntest
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
-import ru.zuma.materialdesigntest.rest.Product
+import ru.zuma.materialdesigntest.rest.model.Product
 import android.view.LayoutInflater
 import android.widget.*
 
@@ -36,10 +36,14 @@ class ProductAdapter(private val products: List<Product>) :
         val p = products[position]
         val view = holder.view
 
-        (view!!.findViewById(R.id.tvProductID) as TextView).text = "№ ${p.id}"
-        (view.findViewById<View>(R.id.tvProductCategory) as TextView).text = p.category
-        (view.findViewById<View>(R.id.tvProductName) as TextView).text = p.name
-        (view.findViewById<View>(R.id.tvPrice) as TextView).text = "${p.price} руб."
+        view.findViewById<TextView>(R.id.tvProductID).text = "№ ${p.id}"
+        view.findViewById<TextView>(R.id.tvProductCategory).text = p.category
+        view.findViewById<TextView>(R.id.tvProductName).text = p.name
+        view.findViewById<TextView>(R.id.tvPrice).text = "${p.price} руб."
+        p.icon?.let {
+            view.findViewById<ImageView>(R.id.icon).setImageDrawable(it)
+        }
+
     }
 
     // Return the size of your dataset (invoked by the layout manager)

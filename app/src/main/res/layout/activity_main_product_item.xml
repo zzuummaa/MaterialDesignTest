@@ -29,7 +29,7 @@
                     android:padding="16dp">
 
                     <ru.zuma.materialdesigntest.view.RoundedTextView
-                        android:id="@+id/roundedTextView"
+                        android:id="@+id/tvProductCategory"
                         android:layout_width="wrap_content"
                         android:layout_height="20dp"
                         android:text="Техника"
@@ -47,12 +47,11 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <ImageView
-                        android:id="@+id/imageView"
+                        android:id="@+id/icon"
                         android:layout_width="240dp"
                         android:layout_height="140dp"
                         android:layout_marginTop="48dp"
                         android:contentDescription="TODO"
-                        android:src="@drawable/laptop"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -70,7 +69,7 @@
                     android:padding="16dp">
 
                     <TextView
-                        android:id="@+id/tvProductCategory"
+                        android:id="@+id/tvProductSubCategory"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -88,7 +87,7 @@
                         android:text="@string/macbook_air_13_nmqd32ru_a_8gb"
                         android:textColor="@color/colorBlack"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tvProductCategory" />
+                        app:layout_constraintTop_toBottomOf="@id/tvProductSubCategory" />
 
                     <TextView
                         android:id="@+id/tvPrice"

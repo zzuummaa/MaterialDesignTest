@@ -24,7 +24,7 @@ import java.util.ArrayList
 
 import kotlinx.android.synthetic.main.activity_register.*
 import ru.zuma.materialdesigntest.rest.AuthService
-import ru.zuma.materialdesigntest.rest.User
+import ru.zuma.materialdesigntest.rest.model.User
 import android.app.Activity
 import android.preference.PreferenceManager
 import android.view.inputmethod.InputMethodManager
@@ -32,7 +32,7 @@ import ru.zuma.materialdesigntest.db.PREF_COOKIES
 
 
 /**
- * A login screen that offers login via email/password.
+ * A login screen that offers login via email/passwd.
  */
 class RegisterActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
     /**
@@ -90,7 +90,7 @@ class RegisterActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
         var cancel = false
         var focusView: View? = null
 
-        // Check for a valid password, if the user entered one.
+        // Check for a valid passwd, if the user entered one.
         if (TextUtils.isEmpty(passwordStr) || !isPasswordValid(passwordStr)) {
             password.error = getString(R.string.error_invalid_password)
             focusView = password
